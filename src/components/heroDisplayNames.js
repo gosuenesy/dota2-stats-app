@@ -21,6 +21,7 @@ const heroDisplayNames = {
   vengeful_spirit: "Vengeful Spirit",
   windrunner: "Windranger",
   zeus: "Zeus",
+  zuus: "Zeus",
   kunkka: "Kunkka",
   lina: "Lina",
   lion: "Lion",
