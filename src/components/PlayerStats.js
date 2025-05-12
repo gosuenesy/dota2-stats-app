@@ -24,8 +24,8 @@ const PlayerStats = () => {
   useEffect(() => {
     const fetchData = async () => {
       const [matchRes, playerRes] = await Promise.all([
-        fetch("/whatthefuck_5.1-1.csv"),
-        fetch("/players_202505071018.csv"),
+        fetch("whatthefuck_5.1-1.csv"),
+        fetch("players_202505071018.csv"),
       ]);
 
       const matchText = await matchRes.text();
