@@ -50,6 +50,7 @@ const PlayerStats = () => {
       const stats = {};
 
       matchData.forEach((match) => {
+        if (!match.player_id || !match.kda || !match.hero_played) return;
         if (scrimOnly && match.is_scrim !== "1") return;
 
         const playerId = match.player_id;
@@ -106,26 +107,23 @@ const PlayerStats = () => {
       );
 
       setPlayerStats(formattedStats);
-      applyFilters(formattedStats, searchQuery);
     };
 
     fetchData();
   }, [scrimOnly]);
 
-  const applyFilters = (stats, query) => {
-    const lowerQuery = query.toLowerCase();
+  useEffect(() => {
+    const lowerQuery = searchQuery.toLowerCase();
     const filtered = playerStats.filter(
       (player) =>
         player.player.toLowerCase().includes(lowerQuery) ||
         player.playerId.includes(lowerQuery)
     );
     setFilteredStats(filtered);
-  };
+  }, [playerStats, searchQuery]);
 
   const handleSearchChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    applyFilters(playerStats, query);
+    setSearchQuery(e.target.value);
     setVisibleStatsCount(50);
   };
 
@@ -143,13 +141,12 @@ const PlayerStats = () => {
     .slice(0, visibleStatsCount)
     .map((player) => {
       const sortedHeroes = [...player.heroes].sort((a, b) => {
-        const aValue = a[orderBy];
-        const bValue = b[orderBy];
+        const aValue = parseFloat(a[orderBy]);
+        const bValue = parseFloat(b[orderBy]);
         if (aValue < bValue) return order === "asc" ? -1 : 1;
         if (aValue > bValue) return order === "asc" ? 1 : -1;
         return 0;
       });
-
       return { ...player, heroes: sortedHeroes };
     });
 
@@ -161,7 +158,7 @@ const PlayerStats = () => {
         </Typography>
 
         <TextField
-          label="Search Player"
+          label="Search Player or PiD"
           variant="outlined"
           fullWidth
           value={searchQuery}
@@ -183,7 +180,7 @@ const PlayerStats = () => {
 
         <Grid container spacing={3} justifyContent="center">
           {sortedStats.map((player) => (
-            <Grid item xs={12} sm={6} key={player.player}>
+            <Grid item xs={12} sm={6} key={player.playerId}>
               <PlayerCard
                 player={player}
                 orderBy={orderBy}
