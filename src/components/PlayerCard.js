@@ -25,7 +25,17 @@ const PlayerCard = ({ player, orderBy, order, onRequestSort }) => {
       component={Paper}
       sx={{ mb: 3, p: 2, width: "100%", maxWidth: 560, minWidth: 560 }}
     >
-      <Typography variant="h6">{player.player}</Typography>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={1}
+      >
+        <Typography variant="h6">{player.player}</Typography>
+        <Typography variant="body2" color="text.secondary">
+          PiD: {player.playerId}
+        </Typography>
+      </Box>
       <Table size="small">
         <TableHead>
           <TableRow>

@@ -90,13 +90,13 @@ const PlayerStats = () => {
               games: data.games,
               winrate: winrate.toFixed(1),
               kda: kda.toFixed(2),
-              rawHero: hero,
             };
           });
 
           return {
             player: playerName,
-            heroes: heroes.sort((a, b) => b.games - a.games),
+            playerId,
+            heroes,
           };
         }
       );
@@ -110,8 +110,10 @@ const PlayerStats = () => {
 
   const applyFilters = (stats, query) => {
     const lowerQuery = query.toLowerCase();
-    const filtered = stats.filter((player) =>
-      player.player.toLowerCase().includes(lowerQuery)
+    const filtered = playerStats.filter(
+      (player) =>
+        player.player.toLowerCase().includes(lowerQuery) ||
+        player.playerId.includes(lowerQuery)
     );
     setFilteredStats(filtered);
   };
