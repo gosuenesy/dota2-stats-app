@@ -99,10 +99,10 @@ const PlayerStats = () => {
   useEffect(() => {
     const lowerQuery = searchQuery.toLowerCase();
     const filtered = playerStats.filter(
-      (player) =>
-        (player.player.toLowerCase().includes(lowerQuery) ||
-          player.playerId.includes(lowerQuery)) &&
-        (!scrimOnly || player.heroes.some((hero) => hero.games > 0))
+      (p) =>
+        (p.player.toLowerCase().includes(lowerQuery) ||
+          p.playerId.includes(lowerQuery)) &&
+        (!scrimOnly || p.heroes.some((hero) => hero.games > 0))
     );
     setFilteredStats(filtered);
     setCurrentPage(1);
@@ -129,6 +129,10 @@ const PlayerStats = () => {
     setCurrentPage(1);
   };
 
+  const handleScrimToggle = (e) => {
+    setScrimOnly(e.target.checked);
+  };
+
   const totalPages = Math.ceil(filteredStats.length / rowsPerPage);
   return (
     <Container maxWidth="lg">
@@ -138,7 +142,7 @@ const PlayerStats = () => {
         </Typography>
 
         <SearchBar query={searchQuery} onChange={setSearchQuery} />
-        <ScrimToggle checked={scrimOnly} onChange={setScrimOnly} />
+        <ScrimToggle scrimOnly={scrimOnly} onToggle={handleScrimToggle} />
         <PlayerList
           players={sortedAndPaginated}
           order={order}
