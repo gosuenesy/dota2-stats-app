@@ -17,7 +17,7 @@ const PlayerCard = ({ player, orderBy, order, onRequestSort }) => {
   const [showMore, setShowMore] = useState(false);
 
   const heroesToShow = showMore
-    ? player.heroes.slice(0, 10)
+    ? player.heroes.slice(0, 20)
     : player.heroes.slice(0, 4);
 
   return (
