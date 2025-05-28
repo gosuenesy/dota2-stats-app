@@ -126,6 +126,5 @@ const heroMapName = {
   natures_prophet: "furion",
   techies_2: "techies",
   dawnbreaker: "dawnbreaker",
-  dawn_breaker: "dawnbreaker",
 };
 export default heroMapName;

@@ -1,34 +1,38 @@
 import React from "react";
 import { TableRow, TableCell } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { green, red, grey, orange } from "@mui/material/colors";
+import heroMapName from "./heroMapName";
 import heroDisplayNames from "./heroDisplayNames";
 
+const getWinrateColor = (winrate) => {
+  if (winrate >= 60) return green[500];
+  if (winrate >= 55) return green[300];
+  if (winrate >= 50) return orange[200];
+  if (winrate >= 40) return red[300];
+  return red[500];
+};
+
+const getKDAColor = (kda) => {
+  if (kda >= 4) return green[500];
+  if (kda >= 3) return green[300];
+  if (kda >= 2) return orange[200];
+  if (kda >= 1) return red[300];
+  return red[500];
+};
+
 const CardRow = ({ heroData }) => {
-  const { hero, games, winrate, kda, rawHero } = heroData;
-  const theme = useTheme();
+  const { hero, games, winrate, kda } = heroData;
+  const lowerHero = hero.toLowerCase();
+  const mappedHero = heroMapName[lowerHero] || lowerHero;
+  const displayName = heroDisplayNames[lowerHero] || hero;
 
-  const imageUrl = `https://cdn.dota2.com/apps/dota2/images/heroes/${hero}_sb.png`;
-
-  const getWinrateColor = () => {
-    const rate = parseFloat(winrate);
-    if (rate >= 60) return theme.palette.success.main;
-    if (rate >= 50) return theme.palette.warning.main;
-    return theme.palette.error.main;
-  };
-
-  const getKdaColor = () => {
-    const value = parseFloat(kda);
-    if (value >= 4) return theme.palette.success.main;
-    if (value >= 2) return theme.palette.warning.main;
-    return theme.palette.error.main;
-  };
+  const imageUrl = `https://cdn.dota2.com/apps/dota2/images/heroes/${mappedHero}_sb.png`;
 
   return (
     <TableRow>
       <TableCell>
         <img
           src={imageUrl}
-          alt={rawHero}
           style={{
             maxWidth: "30px",
             height: "auto",
@@ -36,11 +40,13 @@ const CardRow = ({ heroData }) => {
             verticalAlign: "middle",
           }}
         />
-        {heroDisplayNames[hero] || hero}
+        {displayName}
       </TableCell>
       <TableCell>{games}</TableCell>
-      <TableCell sx={{ color: getWinrateColor() }}>{winrate}%</TableCell>
-      <TableCell sx={{ color: getKdaColor() }}>{kda}</TableCell>
+      <TableCell sx={{ color: getWinrateColor(parseFloat(winrate)) }}>
+        {winrate}%
+      </TableCell>
+      <TableCell sx={{ color: getKDAColor(parseFloat(kda)) }}>{kda}</TableCell>
     </TableRow>
   );
 };
