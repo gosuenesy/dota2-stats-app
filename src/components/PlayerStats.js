@@ -8,6 +8,11 @@ import {
   Grid,
   FormControlLabel,
   Checkbox,
+  Pagination,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import PlayerCard from "./PlayerCard";
 import heroNameMap from "./heroMapName";
@@ -16,10 +21,11 @@ const PlayerStats = () => {
   const [playerStats, setPlayerStats] = useState([]);
   const [filteredStats, setFilteredStats] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [visibleStatsCount, setVisibleStatsCount] = useState(50);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("games");
   const [scrimOnly, setScrimOnly] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(4);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -120,11 +126,11 @@ const PlayerStats = () => {
         player.playerId.includes(lowerQuery)
     );
     setFilteredStats(filtered);
+    setCurrentPage(1);
   }, [playerStats, searchQuery]);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setVisibleStatsCount(50);
   };
 
   const handleScrimToggle = (e) => {
@@ -137,8 +143,20 @@ const PlayerStats = () => {
     setOrderBy(property);
   };
 
-  const sortedStats = filteredStats
-    .slice(0, visibleStatsCount)
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(1);
+  };
+
+  const totalPages = Math.ceil(filteredStats.length / rowsPerPage);
+
+  const paginatedStats = filteredStats
+    .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
     .map((player) => {
       const sortedHeroes = [...player.heroes].sort((a, b) => {
         const aValue = parseFloat(a[orderBy]);
@@ -179,7 +197,7 @@ const PlayerStats = () => {
         />
 
         <Grid container spacing={3} justifyContent="center">
-          {sortedStats.map((player) => (
+          {paginatedStats.map((player) => (
             <Grid item xs={12} sm={6} key={player.playerId}>
               <PlayerCard
                 player={player}
@@ -190,6 +208,39 @@ const PlayerStats = () => {
             </Grid>
           ))}
         </Grid>
+
+        <Box
+          mt={4}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          flexWrap="wrap"
+          gap={2}
+        >
+          <FormControl sx={{ minWidth: 120 }}>
+            <InputLabel>Players</InputLabel>
+            <Select
+              value={rowsPerPage}
+              label="Rows"
+              onChange={handleChangeRowsPerPage}
+            >
+              {[2, 4, 8, 16, 32].map((num) => (
+                <MenuItem key={num} value={num}>
+                  {num}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={handleChangePage}
+            color="primary"
+            shape="rounded"
+            size="large"
+          />
+        </Box>
       </Box>
     </Container>
   );
