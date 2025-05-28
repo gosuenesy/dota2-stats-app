@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
-import {
-  Container,
-  Box,
-  Typography,
-  TextField,
-  Grid,
-  FormControlLabel,
-  Checkbox,
-  Pagination,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from "@mui/material";
-import PlayerCard from "./PlayerCard";
+import { Container, Box, Typography } from "@mui/material";
+import SearchBar from "./SearchBar";
+import ScrimToggle from "./ScrimToggle";
+import PlayerList from "./PlayerList";
+import PaginationControls from "./PaginationControls";
 import heroNameMap from "./heroMapName";
 
 const PlayerStats = () => {
@@ -59,60 +49,48 @@ const PlayerStats = () => {
         if (!match.player_id || !match.kda || !match.hero_played) return;
         if (scrimOnly && match.is_scrim !== "1") return;
 
+        const [kills, deaths, assists] = match.kda.split("/").map(Number);
         const playerId = match.player_id;
         const hero = match.hero_played;
         const result = match.result === "1";
-        const [kills, deaths, assists] = match.kda.split("/").map(Number);
 
-        if (!stats[playerId]) stats[playerId] = {};
-        if (!stats[playerId][hero]) {
-          stats[playerId][hero] = {
-            games: 0,
-            wins: 0,
-            kills: 0,
-            deaths: 0,
-            assists: 0,
-          };
-        }
+        stats[playerId] = stats[playerId] || {};
+        stats[playerId][hero] = stats[playerId][hero] || {
+          games: 0,
+          wins: 0,
+          kills: 0,
+          deaths: 0,
+          assists: 0,
+        };
 
-        const heroStats = stats[playerId][hero];
-        heroStats.games += 1;
-        if (result) heroStats.wins += 1;
-        heroStats.kills += kills;
-        heroStats.deaths += deaths;
-        heroStats.assists += assists;
+        const s = stats[playerId][hero];
+        s.games += 1;
+        if (result) s.wins += 1;
+        s.kills += kills;
+        s.deaths += deaths;
+        s.assists += assists;
       });
 
-      const formattedStats = Object.entries(stats).map(
-        ([playerId, heroData]) => {
-          const playerName = players[playerId] || `Unknown (${playerId})`;
-
-          const heroes = Object.entries(heroData).map(([hero, data]) => {
-            const correctHeroName =
-              heroNameMap[hero.toLowerCase()] || hero.toLowerCase();
-            const kda =
-              data.deaths === 0
-                ? data.kills + data.assists
-                : (data.kills + data.assists) / data.deaths;
-            const winrate = (data.wins / data.games) * 100;
-
-            return {
-              hero: correctHeroName,
-              games: data.games,
-              winrate: winrate.toFixed(1),
-              kda: kda.toFixed(2),
-            };
-          });
-
+      const formatted = Object.entries(stats).map(([playerId, heroData]) => ({
+        player: players[playerId] || `Unknown (${playerId})`,
+        playerId,
+        heroes: Object.entries(heroData).map(([hero, data]) => {
+          const correct = heroNameMap[hero.toLowerCase()] || hero.toLowerCase();
+          const kda =
+            data.deaths === 0
+              ? data.kills + data.assists
+              : (data.kills + data.assists) / data.deaths;
+          const winrate = (data.wins / data.games) * 100;
           return {
-            player: playerName,
-            playerId,
-            heroes,
+            hero: correct,
+            games: data.games,
+            winrate: winrate.toFixed(1),
+            kda: kda.toFixed(2),
           };
-        }
-      );
+        }),
+      }));
 
-      setPlayerStats(formattedStats);
+      setPlayerStats(formatted);
     };
 
     fetchData();
@@ -122,26 +100,24 @@ const PlayerStats = () => {
     const lowerQuery = searchQuery.toLowerCase();
     const filtered = playerStats.filter(
       (player) =>
-        player.player.toLowerCase().includes(lowerQuery) ||
-        player.playerId.includes(lowerQuery)
+        (player.player.toLowerCase().includes(lowerQuery) ||
+          player.playerId.includes(lowerQuery)) &&
+        (!scrimOnly || player.heroes.some((hero) => hero.games > 0))
     );
     setFilteredStats(filtered);
     setCurrentPage(1);
-  }, [playerStats, searchQuery]);
+  }, [playerStats, searchQuery, scrimOnly]);
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleScrimToggle = (e) => {
-    setScrimOnly(e.target.checked);
-  };
-
-  const handleRequestSort = (property) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
+  const sortedAndPaginated = filteredStats
+    .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+    .map((player) => {
+      const sortedHeroes = [...player.heroes].sort((a, b) => {
+        const aVal = parseFloat(a[orderBy]);
+        const bVal = parseFloat(b[orderBy]);
+        return order === "asc" ? aVal - bVal : bVal - aVal;
+      });
+      return { ...player, heroes: sortedHeroes };
+    });
 
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
@@ -154,20 +130,6 @@ const PlayerStats = () => {
   };
 
   const totalPages = Math.ceil(filteredStats.length / rowsPerPage);
-
-  const paginatedStats = filteredStats
-    .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
-    .map((player) => {
-      const sortedHeroes = [...player.heroes].sort((a, b) => {
-        const aValue = parseFloat(a[orderBy]);
-        const bValue = parseFloat(b[orderBy]);
-        if (aValue < bValue) return order === "asc" ? -1 : 1;
-        if (aValue > bValue) return order === "asc" ? 1 : -1;
-        return 0;
-      });
-      return { ...player, heroes: sortedHeroes };
-    });
-
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
@@ -175,72 +137,21 @@ const PlayerStats = () => {
           Dota 2 Player Stats
         </Typography>
 
-        <TextField
-          label="Search Player or PiD"
-          variant="outlined"
-          fullWidth
-          value={searchQuery}
-          onChange={handleSearchChange}
-          sx={{ mb: 2 }}
+        <SearchBar query={searchQuery} onChange={setSearchQuery} />
+        <ScrimToggle checked={scrimOnly} onChange={setScrimOnly} />
+        <PlayerList
+          players={sortedAndPaginated}
+          order={order}
+          orderBy={orderBy}
+          onRequestSort={setOrderBy}
         />
-
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={scrimOnly}
-              onChange={handleScrimToggle}
-              color="primary"
-            />
-          }
-          label="Scrim"
-          sx={{ mb: 3 }}
+        <PaginationControls
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handleChangePage}
         />
-
-        <Grid container spacing={3} justifyContent="center">
-          {paginatedStats.map((player) => (
-            <Grid item xs={12} sm={6} key={player.playerId}>
-              <PlayerCard
-                player={player}
-                orderBy={orderBy}
-                order={order}
-                onRequestSort={handleRequestSort}
-              />
-            </Grid>
-          ))}
-        </Grid>
-
-        <Box
-          mt={4}
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          flexWrap="wrap"
-          gap={2}
-        >
-          <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel>Players</InputLabel>
-            <Select
-              value={rowsPerPage}
-              label="Rows"
-              onChange={handleChangeRowsPerPage}
-            >
-              {[2, 4, 8, 16, 32].map((num) => (
-                <MenuItem key={num} value={num}>
-                  {num}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <Pagination
-            count={totalPages}
-            page={currentPage}
-            onChange={handleChangePage}
-            color="primary"
-            shape="rounded"
-            size="large"
-          />
-        </Box>
       </Box>
     </Container>
   );
