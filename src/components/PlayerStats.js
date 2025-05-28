@@ -138,7 +138,7 @@ const PlayerStats = () => {
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" gutterBottom>
-          Dota 2 Player Stats
+          Dota 2 Pro Player Stats
         </Typography>
 
         <SearchBar query={searchQuery} onChange={setSearchQuery} />
