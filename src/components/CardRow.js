@@ -20,7 +20,7 @@ const getKDAColor = (kda) => {
   return red[500];
 };
 
-const CardRow = ({ heroData }) => {
+const CardRow = ({ heroData, rank }) => {
   const { hero, games, winrate, kda } = heroData;
   const lowerHero = hero.toLowerCase();
   const mappedHero = heroMapName[lowerHero] || lowerHero;
@@ -30,6 +30,7 @@ const CardRow = ({ heroData }) => {
 
   return (
     <TableRow>
+      {rank !== undefined && <TableCell>{rank}</TableCell>}
       <TableCell>
         <img
           src={imageUrl}
