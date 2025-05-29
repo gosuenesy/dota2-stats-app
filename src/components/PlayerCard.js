@@ -23,7 +23,7 @@ const PlayerCard = ({ player, orderBy, order, onRequestSort }) => {
   return (
     <Box
       component={Paper}
-      sx={{ mb: 3, p: 2, width: "100%", maxWidth: 560, minWidth: 560 }}
+      sx={{ mb: 0, p: 2, width: "100%", maxWidth: 560, minWidth: 560 }}
     >
       <Box
         display="flex"
