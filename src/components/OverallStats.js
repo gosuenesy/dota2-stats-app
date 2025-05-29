@@ -113,7 +113,7 @@ const OverallStats = () => {
         <SearchBar
           searchQuery={searchQuery}
           onChange={setSearchQuery}
-          label="Search Hero"
+          label="Search Hero Name"
         />
 
         <Grid
@@ -130,11 +130,9 @@ const OverallStats = () => {
             />
           </Grid>
           <Grid item xs={12} sm="auto">
-            <Box display="flex" justifyContent="flex-end">
-              <Button component={Link} to="/" variant="outlined">
-                Player Stats
-              </Button>
-            </Box>
+            <Button component={Link} to="/" variant="outlined">
+              Player Stats
+            </Button>
           </Grid>
         </Grid>
 

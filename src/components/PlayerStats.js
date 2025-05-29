@@ -150,14 +150,15 @@ const PlayerStats = () => {
         />
         <Grid
           container
+          spacing={2}
           alignItems="center"
           justifyContent="space-between"
           sx={{ mb: 2 }}
         >
-          <Grid item>
+          <Grid item xs={12} sm="auto">
             <ScrimToggle scrimOnly={scrimOnly} onToggle={handleScrimToggle} />
           </Grid>
-          <Grid item>
+          <Grid item xs={12} sm="auto">
             <Button component={Link} to="/overall" variant="outlined">
               Overall Hero Stats
             </Button>
