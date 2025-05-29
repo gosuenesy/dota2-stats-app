@@ -1,9 +1,9 @@
 import React from "react";
 import { TextField } from "@mui/material";
 
-const SearchBar = ({ searchQuery, onChange }) => (
+const SearchBar = ({ searchQuery, onChange, label = "Search" }) => (
   <TextField
-    label="Search Player or PiD"
+    label={label}
     variant="outlined"
     fullWidth
     value={searchQuery}
