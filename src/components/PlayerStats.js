@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
-import { Container, Box, Typography } from "@mui/material";
+import { Container, Box, Typography, Grid } from "@mui/material";
 import SearchBar from "./SearchBar";
 import ScrimToggle from "./ScrimToggle";
 import PlayerList from "./PlayerList";
 import PaginationControls from "./PaginationControls";
 import heroNameMap from "./heroMapName";
+import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const PlayerStats = () => {
   const [playerStats, setPlayerStats] = useState([]);
@@ -138,11 +140,29 @@ const PlayerStats = () => {
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" gutterBottom>
-          Dota 2 Pro Player Stats
+          Player Stats
         </Typography>
 
-        <SearchBar query={searchQuery} onChange={setSearchQuery} />
-        <ScrimToggle scrimOnly={scrimOnly} onToggle={handleScrimToggle} />
+        <SearchBar
+          query={searchQuery}
+          onChange={setSearchQuery}
+          label="Search Player Name or PiD"
+        />
+        <Grid
+          container
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ mb: 2 }}
+        >
+          <Grid item>
+            <ScrimToggle scrimOnly={scrimOnly} onToggle={handleScrimToggle} />
+          </Grid>
+          <Grid item>
+            <Button component={Link} to="/overall" variant="outlined">
+              Overall Hero Stats
+            </Button>
+          </Grid>
+        </Grid>
         <PlayerList
           players={sortedAndPaginated}
           order={order}
