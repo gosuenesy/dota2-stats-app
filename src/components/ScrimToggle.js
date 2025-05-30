@@ -1,13 +1,13 @@
 import React from "react";
-import { FormControlLabel, Checkbox } from "@mui/material";
+import { FormControlLabel, Switch } from "@mui/material";
 
 const ScrimToggle = ({ scrimOnly, onToggle }) => (
   <FormControlLabel
     control={
-      <Checkbox checked={scrimOnly} onChange={onToggle} color="primary" />
+      <Switch checked={scrimOnly} onChange={onToggle} color="primary" />
     }
     label="Scrim"
-    sx={{ mb: 3 }}
+    sx={{ mb: 1 }}
   />
 );
 
