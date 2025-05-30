@@ -106,10 +106,6 @@ const OverallStats = () => {
   return (
     <Container maxWidth="md">
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Overall Hero Stats
-        </Typography>
-
         <SearchBar
           searchQuery={searchQuery}
           onChange={setSearchQuery}
@@ -128,11 +124,6 @@ const OverallStats = () => {
               scrimOnly={scrimOnly}
               onToggle={(e) => setScrimOnly(e.target.checked)}
             />
-          </Grid>
-          <Grid item xs={12} sm="auto">
-            <Button component={Link} to="/" variant="outlined">
-              Player Stats
-            </Button>
           </Grid>
         </Grid>
 
