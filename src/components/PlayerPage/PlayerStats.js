@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
 import { Container, Box, Typography, Grid } from "@mui/material";
-import SearchBar from "./SearchBar";
-import ScrimToggle from "./ScrimToggle";
+import SearchBar from "../SearchBar";
+import ScrimToggle from "../ScrimToggle";
 import PlayerList from "./PlayerList";
-import PaginationControls from "./PaginationControls";
-import heroNameMap from "./heroMapName";
+import PaginationControls from "../PaginationControls";
+import heroNameMap from "../heroMapName";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 

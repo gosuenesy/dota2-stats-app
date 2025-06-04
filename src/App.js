@@ -1,8 +1,8 @@
 import React from "react";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import PlayerStats from "./components/PlayerStats";
-import OverallStats from "./components/OverallStats";
+import PlayerStats from "./components/PlayerPage/PlayerStats";
+import OverallStats from "./components/OverallPage/OverallStats";
 import TopBarNav from "./components/TopBarNav";
 
 const darkTheme = createTheme({

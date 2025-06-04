@@ -23,7 +23,9 @@ const TopNavBar = () => {
             alignItems: "center",
           }}
         >
-          <Typography variant="h6">Dota 2 Stats</Typography>
+          <Typography variant="h6" noWrap>
+            Dota 2 Stats
+          </Typography>
           <Box>
             <Button
               component={Link}

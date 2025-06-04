@@ -14,11 +14,11 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import Papa from "papaparse";
-import CardRow from "./CardRow";
-import CardColumn from "./CardColumn";
-import SearchBar from "./SearchBar";
-import ScrimToggle from "./ScrimToggle";
-import heroNameMap from "./heroMapName";
+import CardRow from "../CardRow";
+import CardColumn from "../CardColumn";
+import SearchBar from "../SearchBar";
+import ScrimToggle from "../ScrimToggle";
+import heroNameMap from "../heroMapName";
 
 const OverallStats = () => {
   const [allStats, setAllStats] = useState([]);

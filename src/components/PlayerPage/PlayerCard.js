@@ -10,8 +10,8 @@ import {
   Box,
   Button,
 } from "@mui/material";
-import CardRow from "./CardRow";
-import CardColumn from "./CardColumn";
+import CardRow from "../CardRow";
+import CardColumn from "../CardColumn";
 
 const PlayerCard = ({ player, orderBy, order, onRequestSort }) => {
   const [showMore, setShowMore] = useState(false);
